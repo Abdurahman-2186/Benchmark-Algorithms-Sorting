@@ -7,3 +7,10 @@
 تشغيل: `java SortingBenchmark.java`
 
 ## جدول النتائج (µs)
+| الخوارزمية | Random | Sorted Reversely | Sorted Partially | Sorted Fully |
+|---|---:|---:|---:|---:|
+| Selection Sort | 2,121,623 | 3,921,590 | 2,173,816 | 2,108,029 |
+| Insertion Sort | 628,231 | 1,208,960 | 136,801 | 84 |
+| Bubble Sort (flag) | 15,295,168 | 8,077,285 | 8,019,735 | 202 |
+| Merge Sort | 16,679 | 3,848 | 6,728 | 4,000 |
+| Quick Sort (pivot = first) | 9,255 | 4,520,409 | 6,076 | 3,606,683 |
