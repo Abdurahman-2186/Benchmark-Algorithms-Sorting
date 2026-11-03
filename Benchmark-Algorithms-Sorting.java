@@ -36,4 +36,74 @@ public class SortingBenchmark {
     }
  
     static int[] sortedArray(Random rnd) {
-        
+        int[] a = randomArray(rnd);
+        Arrays.sort(a);
+        return a;
+    }
+ 
+    // ===================== Sorting algorithms =====================
+    // 1) Selection Sort: O(n^2) always, O(1) space, n-1 swaps at most
+    static void selectionSort(int[] a) {
+        int n = a.length;
+        for (int i = 0; i < n - 1; i++) {
+            int smallest = i;
+            for (int j = i + 1; j < n; j++)
+                if (a[j] < a[smallest]) smallest = j;
+            int t = a[i]; a[i] = a[smallest]; a[smallest] = t;
+        }
+    }
+ 
+    // 2) Insertion Sort: best O(n), worst O(n^2)
+    static void insertionSort(int[] a) {
+        for (int i = 1; i < a.length; i++) {
+            int key = a[i];
+            int j = i - 1;
+            while (j >= 0 && a[j] > key) { a[j + 1] = a[j]; j--; }
+            a[j + 1] = key;
+        }
+    }
+ 
+    // 3) Bubble Sort (optimized with a "swapped" flag): best O(n), worst O(n^2)
+    static void bubbleSort(int[] a) {
+        int n = a.length;
+        boolean swapped = true;
+        for (int i = 0; swapped && i < n - 1; i++) {
+            swapped = false;
+            for (int j = 0; j < n - 1 - i; j++) {
+                if (a[j] > a[j + 1]) {
+                    int t = a[j]; a[j] = a[j + 1]; a[j + 1] = t;
+                    swapped = true;
+                }
+            }
+        }
+    }
+ 
+    // 4) Merge Sort: O(n log n) always, O(n) extra space
+    static void mergeSort(int[] a, int left, int right) {
+        if (left >= right) return;
+        int middle = left + (right - left) / 2;
+        mergeSort(a, left, middle);
+        mergeSort(a, middle + 1, right);
+        merge(a, left, middle, right);
+    }
+ 
+    static void merge(int[] a, int left, int middle, int right) {
+        int n1 = middle - left + 1, n2 = right - middle;
+        int[] L = new int[n1], R = new int[n2];
+        for (int i = 0; i < n1; i++) L[i] = a[left + i];
+        for (int j = 0; j < n2; j++) R[j] = a[middle + 1 + j];
+        int i = 0, j = 0, k = left;
+        while (i < n1 && j < n2) a[k++] = (L[i] <= R[j]) ? L[i++] : R[j++];
+        while (i < n1) a[k++] = L[i++];
+        while (j < n2) a[k++] = R[j++];
+    }
+ 
+    // 5) Quick Sort (first element as pivot, exactly as in the lecture)
+    //    average O(n log n), worst O(n^2) (already sorted / reversed input)
+    static void quickSort(int[] a, int left, int right) {
+        if (left >= right) return;
+        int middle = partition(a, left, right);
+        quickSort(a, left, middle - 1);
+        quickSort(a, middle + 1, right);
+    }
+ 
