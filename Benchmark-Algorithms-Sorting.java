@@ -106,4 +106,32 @@ public class SortingBenchmark {
         quickSort(a, left, middle - 1);
         quickSort(a, middle + 1, right);
     }
+     static int partition(int[] a, int left, int right) {
+        int x = a[left];
+        int i = left;
+        for (int j = left + 1; j <= right; j++) {
+            if (a[j] < x) {
+                i++;
+                int t = a[i]; a[i] = a[j]; a[j] = t;
+            }
+        }
+        int t = a[i]; a[i] = a[left]; a[left] = t;
+        return i;
+    }
+ 
+    // ===================== Timing =====================
+    static long timeSort(int algo, int[] original) {
+        int[] testArray = Arrays.copyOf(original, original.length); // copy is NOT timed
+        long start = System.nanoTime();
+        switch (algo) {
+            case 0: selectionSort(testArray); break;
+            case 1: insertionSort(testArray); break;
+            case 2: bubbleSort(testArray); break;
+            case 3: mergeSort(testArray, 0, testArray.length - 1); break;
+            case 4: quickSort(testArray, 0, testArray.length - 1); break;
+        }
+        long end = System.nanoTime();
+        if (!isSorted(testArray)) throw new IllegalStateException(ALGOS[algo] + " failed to sort!");
+        return (end - start) / 1000; // microseconds
+    }
  
