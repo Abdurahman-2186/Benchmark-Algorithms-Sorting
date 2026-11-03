@@ -135,3 +135,43 @@ public class SortingBenchmark {
         return (end - start) / 1000; // microseconds
     }
  
+    static boolean isSorted(int[] a) {
+        for (int i = 1; i < a.length; i++) if (a[i - 1] > a[i]) return false;
+        return true;
+    }
+ 
+    static void run() {
+        Random rnd = new Random(42);
+        int[][] data = { randomArray(rnd), reversedArray(rnd), partiallySortedArray(rnd), sortedArray(rnd) };
+ 
+        // warm-up so the JIT compiler does not distort the first measurements
+        int[] warm = Arrays.copyOf(data[0], 5000);
+        for (int r = 0; r < 20; r++)
+            for (int al = 0; al < 5; al++) timeSort(al, warm);
+ 
+        long[][] res = new long[5][4];
+        for (int al = 0; al < 5; al++)
+            for (int c = 0; c < 4; c++) {
+                res[al][c] = timeSort(al, data[c]);
+                System.err.println("done: " + ALGOS[al] + " / " + CASES[c]);
+            }
+ 
+        System.out.printf("N = %,d%n%n", N);
+        System.out.printf("%-16s | %20s | %20s | %20s | %20s%n",
+                "Algorithm", "Random", "Sorted Reversely", "Sorted Partially", "Sorted Fully");
+        System.out.println("-".repeat(16 + 4 * 23 + 3));
+        for (int al = 0; al < 5; al++)
+            System.out.printf("%-16s | %17s µs | %17s µs | %17s µs | %17s µs%n", ALGOS[al],
+                    String.format("%,d", res[al][0]), String.format("%,d", res[al][1]),
+                    String.format("%,d", res[al][2]), String.format("%,d", res[al][3]));
+    }
+ 
+    public static void main(String[] args) throws Exception {
+        // Quick Sort with a first-element pivot recurses ~N levels deep on sorted input,
+        // so we run on a thread with a large stack to avoid StackOverflowError.
+        Thread t = new Thread(null, SortingBenchmark::run, "bench", 1024L * 1024 * 1024);
+        t.start();
+        t.join();
+    }
+}
+ 
